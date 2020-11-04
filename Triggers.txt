@@ -1,0 +1,178 @@
+CREATE TABLE product
+(product_id number(5),
+product_name varchar2(32),
+supplier_name varchar2(32),
+unit_price number(7,2) );
+
+Table created
+
+create table product_price_history(product_id number(5),
+product_name varchar2(32),
+supplier_name varchar2(32),
+unit_price number(7,2));
+
+Table created
+
+CREATE or REPLACE TRIGGER price_history_trigger
+BEFORE UPDATE OF unit_price
+ON product
+FOR EACH ROW
+BEGIN
+INSERT INTO product_price_history
+VALUES
+(:old.product_id,
+:old.product_name,
+:old.supplier_name,
+:old.unit_price);
+END;
+/
+trigger created.
+0.09 seconds
+
+CREATE TABLE account (acct_num INT, amount DECIMAL(10,2));
+Query OK, 0 rows affected (1.17 sec)
+1.create Triggers
+
+mysql> CREATE TRIGGER ins_sumamount BEFORE INSERT ON account
+    ->        FOR EACH ROW SET @sumamount = @sumamount + NEW.amount;
+Query OK, 0 rows affected (0.75 sec)
+
+mysql> SET @sumamount = 0;
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> INSERT INTO account VALUES(137,14.98),(141,1937.50),(97,-100.00);
+Query OK, 3 rows affected (0.45 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+mysql> SELECT @sumamount AS 'amount inserted';
++-----------------------+
+| amount  inserted      |
++-----------------------+
+|               1852.48 |
++-----------------------+
+1 row in set (0.05 sec)
+
+mysql> CREATE TRIGGER ins_transaction BEFORE INSERT ON account
+    ->        FOR EACH ROW PRECEDES ins_sumamount
+    ->        SET
+    ->        @deposits = @deposits + IF(NEW.amount>0,NEW.amount,0),
+    ->        @withdrawals = @withdrawals + IF(NEW.amount<0,-NEW.amount,0);
+Query OK, 0 rows affected (0.18 sec)
+
+mysql> delimiter //
+mysql> CREATE TRIGGER upd_check BEFORE UPDATE ON account
+    ->        FOR EACH ROW
+    ->        BEGIN
+    ->            IF NEW.amount < 0 THEN
+    ->                SET NEW.amount = 0;
+    ->            ELSEIF NEW.amount > 100 THEN
+    ->                SET NEW.amount = 100;
+    ->            END IF;
+    ->        END;//
+Query OK, 0 rows affected (0.16 sec)
+
+mysql> delimiter ;
+
+CREATE TABLE term1(a1 INT);
+CREATE TABLE term2(a2 INT);
+CREATE TABLE term3(a3 INT NOT NULL AUTO_INCREMENT PRIMARY KEY);
+CREATE TABLE term4(
+  a4 INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  b4 INT DEFAULT 0
+);
+
+delimiter |
+
+CREATE TRIGGER termref BEFORE INSERT ON term1
+  FOR EACH ROW
+  BEGIN
+    INSERT INTO term2 SET a2 = NEW.a1;
+    DELETE FROM term3 WHERE a3 = NEW.a1;
+    UPDATE term4 SET b4 = b4 + 1 WHERE a4 = NEW.a1;
+  END;
+|
+
+delimiter ;
+
+INSERT INTO term3 (a3) VALUES
+  (NULL), (NULL), (NULL), (NULL), (NULL),
+  (NULL), (NULL), (NULL), (NULL), (NULL);
+
+INSERT INTO test4 (a4) VALUES
+  (0), (0), (0), (0), (0), (0), (0), (0), (0), (0);
+
+mysql> INSERT INTO term1 VALUES 
+       (1), (3), (1), (7), (1), (8), (4), (4);
+Query OK, 8 rows affected (0.01 sec)
+Records: 8  Duplicates: 0  Warnings: 0
+
+mysql> SELECT * FROM term1;
++------+
+| a1   |
++------+
+|    1 |
+|    3 |
+|    1 |
+|    7 |
+|    1 |
+|    8 |
+|    4 |
+|    4 |
++------+
+8 rows in set (0.00 sec)
+
+mysql>CREATE TABLE employee1(id INT);
+Query OK, 0 rows affected (0.44 sec)
+
+mysql> CREATE TABLE employee2(id2 INT);
+Query OK, 0 rows affected (0.47 sec)
+
+mysql> CREATE TABLE employee3(id3 INT NOT NULL AUTO_INCREMENT PRIMARY KEY);
+Query OK, 0 rows affected (0.62 sec)
+CREATE TABLE employee5(id5 int not null auto_increment primary key, b5 int default 0
+    -> );
+Query OK, 0 rows affected (0.50 sec)
+ delimiter |
+mysql> create trigger termref before insert on employee1
+    -> for each row
+    -> begin
+    -> insert into employee2 SET id2 = NEW.id;
+    -> DELETE FROM employee3 WHERE id3 = NEW.id;
+    -> UPDATE employee4 SET b5 = b5 + 1 WHERE id5 = NEW.id;
+    -> end;
+    -> |
+Query OK, 0 rows affected (0.11 sec)
+
+mysql> INSERT INTO employee3 (id3) VALUES
+    -> (NULL), (NULL), (NULL), (NULL), (NULL),
+    ->   (NULL), (NULL), (NULL), (NULL), (NULL);
+    -> |
+Query OK, 10 rows affected (0.14 sec)
+Records: 10  Duplicates: 0  Warnings: 0
+
+mysql> INSERT INTO employee5 (id5) VALUES
+    ->  (0), (0), (0), (0), (0), (0), (0), (0), (0), (0);
+    -> |
+Query OK, 10 rows affected (0.09 sec)
+Records: 10  Duplicates: 0  Warnings: 0
+
+mysql> INSERT INTO employee1 VALUES
+    -> (10), (32), (10), (67), (10), (100), (41), (41);
+Query OK, 8 rows affected (0.01 sec)
+Records: 8  Duplicates: 0  Warnings: 0
+mysql> SELECT * FROM employee1;
++-------+
+| id    |
++------ +
+|    10 |
+|    32 |
+|    10 |
+|    67 |
+|    10 |
+|    100|
+|    41 |
+|    41 |
++------+
+8 rows in set (0.00 sec)
+
+

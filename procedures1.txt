@@ -1,0 +1,102 @@
+create table student120(studid INT,
+studname varchar(20),
+Category varchar(20),
+Addres   varchar(20),
+phoNum int);
+
+Command(s) completed successfully.
+insert into student120(studid,studname,Category,Addres,phoNum)
+values
+(01,'sowmya','computers','rajampet',889900776);
+insert into student120(studid,studname,Category,Addres,phoNum)
+values
+(02,'ramya','Science','kadapa',889900700);
+insert into student120(studid,studname,Category,Addres,phoNum)
+values
+(03,'rani','programming','kadapa',889999776);
+insert into student120(studid,studname,Category,Addres,phoNum)
+values
+(04,'teju','computers','rajamandri',800900776);
+insert into student120(studid,studname,Category,Addres,phoNum)
+values
+(05,'navya','Science','rajampet',889100776);
+insert into student120(studid,studname,Category,Addres,phoNum)
+values
+(06,'akash','programming','rajampet',80900776);
+insert into student120(studid,studname,Category,Addres,phoNum)
+values
+(07,'neha','computers','tpt',999900796);
+insert into student120(studid,studname,Category,Addres,phoNum)
+values
+(08,'poornash','Science','kadapa',880900776);
+
+select * from student120;
+1	sowmya	 computers	rajampet	889900776
+2	ramya	 Science	kadapa	        889900700
+3	rani	 programming	kadapa	        889999776
+4	teju	 computers	rajamandri	800900776
+5	navya	 Science	rajampet	889100776
+6	akash	 programming	rajampet	80900776
+7	neha	 computers	tpt	        999900796
+8	poornash Science	kadapa	        880900776
+
+create procedure Getstudent120
+as
+begin
+select * from student120
+end
+go
+Exec [dbo].[Getstudent120];
+
+1	sowmya	 computers	rajampet	889900776
+2	ramya	 Science	kadapa	        889900700
+3	rani	 programming	kadapa	        889999776
+4	teju	 computers	rajamandri	800900776
+5	navya	 Science	rajampet	889100776
+6	akash	 programming	rajampet	80900776
+7	neha	 computers	tpt	        999900796
+8	poornash Science	kadapa	        880900776
+USE [idg.com]
+GO
+
+/****** Object:  StoredProcedure [dbo].[getstudent]    Script Date: 4-11-20 16:34:01 ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+ALTER PROCEDURE [dbo].[Getstudent120](
+@Category varchar(20)
+as
+begin
+select * from student120 where [Category]=@Category
+end
+
+GO
+1	sowmya	 computers	rajampet	889900776
+2	ramya	 Science	kadapa	        889900700
+3	rani	 programming	kadapa	        889999776
+4	teju	 computers	rajamandri	800900776
+5	navya	 Science	rajampet	889100776
+6	akash	 programming	rajampet	80900776
+7	neha	 computers	tpt	        999900796
+8	poornash Science	kadapa	        880900776
+
+Exec [dbo].[Getstudent120] @Category='computers';
+
+1	sowmya	 computers	rajampet	889900776
+7	neha	 computers	tpt	        999900796
+
+Exec [dbo].[Getstudent120] @Category='Science';
+
+2	ramya	 Science	kadapa	        889900700
+5	navya	 Science	rajampet	889100776
+8	poornash Science	kadapa	        880900776
+USE [idg.com]
+GO
+
+/****** Object:  StoredProcedure [dbo].[getstudent]    Script Date: 4-11-20 16:52:16 ******/
+DROP PROCEDURE [dbo].[getstudent]
+GO
+Command(s) completed successfully.
